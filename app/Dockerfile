@@ -15,12 +15,16 @@ RUN apk update
 #RUN apk add openrc
 RUN apk add nginx
 RUN adduser -D -g 'www' www
-RUN mkdir /www
+
+#VOLUME /www
+
+RUN mkdir -p /www
 RUN chown -R www:www /var/lib/nginx
 RUN chown -R www:www /www
 RUN mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.orig
 COPY index.html /www/
 COPY nginx.conf /etc/nginx/nginx.conf
+
 
 #RUN rc-service nginx stop
 
@@ -34,5 +38,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 #CMD rc-service nginx start
 
 #CMD ["nginx", "-g", "daemon off;"]
-CMD /tmp/loop.sh
+WORKDIR /tmp
+CMD ["/tmp/loop.sh"]
+#CMD /tmp/loop.sh
 

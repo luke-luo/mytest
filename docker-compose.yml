@@ -1,13 +1,20 @@
 ---
-version: '2'
+version: '2.4'
 
 services:
     app:
         build: app
+        volumes:
+          - type: volume
+            source: mydata
+            target: /mydata
+            volume:
+              nocopy: true
 
     proxy:
         build: proxy
         ports:
          - "80:80"
 
-         
+volumes:
+  mydata:
