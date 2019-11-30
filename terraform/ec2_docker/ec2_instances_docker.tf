@@ -55,10 +55,21 @@ resource "null_resource" "example_provisioner" {
 
     provisioner "remote-exec" {
       inline = [
-        "cd ~/pdata/docker && docker-compose up",
-        "cd ~/pdata/docker && docker-compose scale app=6",
+        "cd ~/pdata/docker && docker-compose up -d",
+        "cd ~/pdata/docker && docker-compose scale app=${tonumber(var.number_nginx)}",
+        #"cd ~/pdata/docker && nohup docker-compose up > /dev/null 2>&1 &",
       ]
     }
+
+/*
+    provisioner "remote-exec" {
+      inline = [
+        #"cd ~/pdata/docker && docker-compose scale app=${var.number_nginx}",
+        "cd ~/pdata/docker && docker-compose scale app=9",
+      ]
+    }
+*/
+
 /*
     provisioner "remote-exec" {
       inline = [

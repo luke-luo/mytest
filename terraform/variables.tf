@@ -73,3 +73,7 @@ variable "aws_ssh_private_key_file" {
   default = "./pdata_test.pem"        #This SSH key file must exist in your file system
 }
 
+variable "number_nginx" {
+  default = "6"
+}
+

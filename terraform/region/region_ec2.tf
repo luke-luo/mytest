@@ -12,7 +12,7 @@ module "ec2_docker1" {
   tag_name = "${var.vpc["name"]}-pdata-docker1"
   aws_ssh_private_key_file = "${var.aws_ssh_private_key_file}"
   aws_ssh_key_name = "${var.aws_ssh_key_name}"
-  
+  number_nginx = "${var.number_nginx}"
 }
 
 

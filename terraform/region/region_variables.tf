@@ -31,6 +31,8 @@ variable "ec2_security_groups_pdata" {
   type = "list"
 }
 
+variable "number_nginx" {}
+
 
 
 

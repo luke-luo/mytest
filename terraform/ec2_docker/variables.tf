@@ -27,4 +27,5 @@ variable "subnet_id" {}
 variable "aws_ssh_private_key_file" {}
 variable "aws_ssh_key_name" {}
 
+variable "number_nginx" {}
 
