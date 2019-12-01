@@ -39,6 +39,8 @@ resource "null_resource" "example_provisioner" {
         "sudo usermod -a -G docker ec2-user",
         "sudo curl -L \"https://github.com/docker/compose/releases/download/1.25.0/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
         "sudo chmod +x /usr/local/bin/docker-compose",
+        "sudo ln -s -f /usr/local/bin/docker-compose /usr/bin/docker-compose",
+        "sudo yum install -y amazon-efs-utils",
       ]
     }
 
@@ -48,72 +50,42 @@ resource "null_resource" "example_provisioner" {
       ]
     }
 
+/*
+    # Generate a file to contain the host IP
     provisioner "local-exec" {
       command = "echo ${aws_instance.ec2_instance_docker.private_ip} > ../docker/app/host_ips.txt"
       #command = "echo ${aws_instance.ec2_instance_docker.private_ip} > host_ips.txt"
     }
-
-    provisioner "local-exec" {
-      command = "echo ${aws_instance.ec2_instance_docker.private_ip} > ${aws_instance.ec2_instance_docker.id}.txt"
-    }
+*/
 
     provisioner "file" {
       source      = "../docker"
       destination = "~/pdata"
     }
 
-    provisioner "remote-exec" {
-      inline = [
-        "cd ~/pdata/docker && docker-compose up -d",
-        "cd ~/pdata/docker && docker-compose scale app=${tonumber(var.number_nginx)}",
-        #"cd ~/pdata/docker && nohup docker-compose up > /dev/null 2>&1 &",
-      ]
-    }
-
-/*
-    provisioner "remote-exec" {
-      inline = [
-        #"cd ~/pdata/docker && docker-compose scale app=${var.number_nginx}",
-        "cd ~/pdata/docker && docker-compose scale app=9",
-      ]
-    }
-*/
-
-/*
-    provisioner "remote-exec" {
-      inline = [
-        "mkdir -p ~/tmp",
-        "mkdir -p ~/tmp/test",
-      ]
-    }
-
+    # The boot_init.sh is for calling the docker-compose after the EC2 host reboot
     provisioner "file" {
-      source      = "../quest-master.zip"
-      destination = "~/tmp/quest-master.zip"
-    }
-
-
-    provisioner "remote-exec" {
-      inline = [
-        "unzip -o ~/tmp/quest-master.zip -d ~/tmp/test/",
-      ]
-    }
-
-    provisioner "file" {
-      source      = "ec2_docker/Dockerfile"
-      destination = "~/tmp/test/quest-master/Dockerfile"
-    }
-
-    provisioner "file" {
-      source      = "ec2_docker/start_nodejs.sh"
-      destination = "~/tmp/test/quest-master/start_nodejs.sh"
+      source      = "boot_init.sh"
+      destination = "/home/ec2-user/boot_init.sh"
     }
 
     provisioner "remote-exec" {
       inline = [
-        "cd ~/tmp/test/quest-master && docker build -t pdata .",
-        "cd ~/tmp/test/quest-master && docker run -p 3000:3000 -d pdata",
+        #use crontab to restart docker-compose after the reboot 
+        "sudo chkconfig crond on",
+        "chmod 755  /home/ec2-user/boot_init.sh",
+        "sudo crontab -l; echo '@reboot sudo -u ec2-user /home/ec2-user/boot_init.sh >> /home/ec2-user/script_output.log 2>&1' | sudo crontab -",
+        "echo ${var.efs_name} > /home/ec2-user/efs_name.txt",
+        "/home/ec2-user/boot_init.sh",
+        /*
+        #mount EFS
+        "sudo mkdir -p efs",
+        "sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport \"${aws_efs_mount_target.0.dns_name}\":/ efs",
+        "sudo chown -R ec2-user efs",
+        #start the docker-compose
+        "cd ~/pdata/docker && docker-compose up -d --scale app=${tonumber(var.number_nginx)}",
+        #"cd ~/pdata/docker && docker-compose scale app=${tonumber(var.number_nginx)}",
+        */
       ]
     }
-*/
 }

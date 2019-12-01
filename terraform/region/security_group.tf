@@ -47,4 +47,42 @@ resource "aws_security_group" "sg_pdata" {
   }
 }
 
+# Allow both ingress and egress for port 2049 (NFS)
+# such that our instances are able to get to the mount
+# target in the AZ.
+#
+# Additionaly, we set the `cidr_blocks` that are allowed
+# such that we restrict the traffic to machines that are
+# within the VPC (and not outside).
+resource "aws_security_group" "pdata_efs" {
+  name        = "pdata_efs_mnt"
+  description = "Allows NFS traffic from instances within the VPC."
+  vpc_id      = "${aws_vpc.main.id}"
+
+  ingress {
+    from_port = 2049
+    to_port   = 2049
+    protocol  = "tcp"
+
+    cidr_blocks = [
+      #"${data.aws_vpc.main.cidr_block}",
+      "${aws_vpc.main.cidr_block}",
+    ]
+  }
+
+  egress {
+    from_port = 2049
+    to_port   = 2049
+    protocol  = "tcp"
+
+    cidr_blocks = [
+      #"${data.aws_vpc.main.cidr_block}",
+      "${aws_vpc.main.cidr_block}",
+    ]
+  }
+
+  tags = {
+    Name = "pdata_allow_nfs_ec2"
+  }
+}
 

@@ -29,3 +29,4 @@ variable "aws_ssh_key_name" {}
 
 variable "number_nginx" {}
 
+variable "efs_name" {}
