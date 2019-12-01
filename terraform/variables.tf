@@ -39,9 +39,9 @@ variable "security_group_name_list" {
         protocol = "tcp"
     },
     {
-        name = "3000"          #user defined, the postfix name for sg
-        from_port = "3000"
-        to_port = "3000"
+        name = "8080"          #user defined, the postfix name for sg
+        from_port = "8080"
+        to_port = "8080"
         protocol = "tcp"
     }
   ]

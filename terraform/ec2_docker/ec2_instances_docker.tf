@@ -48,6 +48,15 @@ resource "null_resource" "example_provisioner" {
       ]
     }
 
+    provisioner "local-exec" {
+      command = "echo ${aws_instance.ec2_instance_docker.private_ip} > ../docker/app/host_ips.txt"
+      #command = "echo ${aws_instance.ec2_instance_docker.private_ip} > host_ips.txt"
+    }
+
+    provisioner "local-exec" {
+      command = "echo ${aws_instance.ec2_instance_docker.private_ip} > ${aws_instance.ec2_instance_docker.id}.txt"
+    }
+
     provisioner "file" {
       source      = "../docker"
       destination = "~/pdata"

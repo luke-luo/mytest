@@ -24,7 +24,9 @@ RUN chown -R www:www /www
 RUN mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.orig
 COPY index.html /www/
 COPY nginx.conf /etc/nginx/nginx.conf
+COPY host_ips.txt /www/
 
+EXPOSE 80
 
 #RUN rc-service nginx stop
 
