@@ -1,15 +1,19 @@
 ---
-version: '2.4'
+version: '3'
+#version: '2.4'
 
 services:
     app:
         build: app
         volumes:
-          - type: volume
-            source: mydata
-            target: /mydata
-            volume:
-              nocopy: true
+           - host_efs:/mydata
+
+#        volumes:
+#          - type: volume
+#            source: /home/ec2-user/efs
+#            target: /mydata
+#            volume:
+#              nocopy: true
 
     proxy:
         build: proxy
@@ -17,4 +21,9 @@ services:
          - "8080:8080"
 
 volumes:
-  mydata:
+  host_efs:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/ec2-user/efs
+      o: bind
