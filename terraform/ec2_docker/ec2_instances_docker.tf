@@ -50,6 +50,7 @@ resource "null_resource" "example_provisioner" {
       ]
     }
 
+
 /*
     # Generate a file to contain the host IP
     provisioner "local-exec" {
@@ -60,8 +61,9 @@ resource "null_resource" "example_provisioner" {
 
     provisioner "file" {
       source      = "../docker"
-      destination = "~/pdata"
+      destination = "/home/ec2-user/pdata/docker"
     }
+
 
     # The boot_init.sh is for calling the docker-compose after the EC2 host reboot
     provisioner "file" {
@@ -71,6 +73,7 @@ resource "null_resource" "example_provisioner" {
 
     provisioner "remote-exec" {
       inline = [
+        "echo ${aws_instance.ec2_instance_docker.private_ip} > /home/ec2-user/pdata/docker/app/host_ips.txt",
         #use crontab to restart docker-compose after the reboot 
         "sudo chkconfig crond on",
         "chmod 755  /home/ec2-user/boot_init.sh",
@@ -89,3 +92,4 @@ resource "null_resource" "example_provisioner" {
       ]
     }
 }
+
