@@ -8,8 +8,16 @@ cleanup()
 {
   MYIP=$(ip route get 1 | awk '{print $NF;exit}')
   echo $MYIP
-  sed -i -e "s/$MYIP//g" /mydata/all_ip.txt
-  sed -i '/^$/d' /mydata/all_ip.txt
+
+  HOSTIP=$(cat /www/host_ips.txt)
+  echo "HOSTIP:" $HOSTIP
+
+  TAGNAME=$(cat /www/tag.txt)
+  echo "TAGNAME:" $TAGNAME
+
+
+  sed -i -e "s/$MYIP//g" /mydata/ip_list/$TAGNAME.txt
+  sed -i '/^$/d' /mydata/ip_list/$TAGNAME.txt
   echo "Catch the shutdown event" > /mydata/evt.txt
   exit 170
 }

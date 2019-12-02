@@ -21,6 +21,7 @@ variable "sg_region" {}
 variable "sg_pdata" {}
 
 variable "tag_name" {}
+variable "tag_name2" {}
 
 variable "subnet_id" {}
 

@@ -74,6 +74,8 @@ resource "null_resource" "example_provisioner" {
     provisioner "remote-exec" {
       inline = [
         "echo ${aws_instance.ec2_instance_docker.private_ip} > /home/ec2-user/pdata/docker/app/host_ips.txt",
+        "echo ${var.tag_name} > /home/ec2-user/pdata/docker/app/tag.txt",
+        "echo ${var.tag_name2} > /home/ec2-user/pdata/docker/app/tag2.txt",
         #use crontab to restart docker-compose after the reboot 
         "sudo chkconfig crond on",
         "chmod 755  /home/ec2-user/boot_init.sh",
