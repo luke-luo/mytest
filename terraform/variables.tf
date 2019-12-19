@@ -74,6 +74,6 @@ variable "aws_ssh_private_key_file" {
 }
 
 variable "number_nginx" {
-  default = "6"
+  default = "2"
 }
 
