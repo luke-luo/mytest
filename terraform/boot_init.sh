@@ -13,10 +13,12 @@ echo "mount command return:$?" >> $LogFile
 sudo chown -R ec2-user $EFSDir >> $LogFile
 df -h >>$LogFile
 
+TAGNAME=$(cat /home/ec2-user/pdata/docker/app/tag.txt)
+sudo mkdir -p $EFSDir/ip_list
+sudo touch $EFSDir/ip_list/$TAGNAME.lock
+
 cd /home/ec2-user/pdata/docker
-
 docker ps
-
 docker-compose up -d --scale app=2
 #docker-compose scale app=6
 
